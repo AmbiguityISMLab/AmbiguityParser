@@ -1,0 +1,81 @@
+
+<html>
+    <head>
+ <link rel="stylesheet" type="text/css" href="../ap.ww.resources/jquery-ui-1.9.2.custom.css">
+  <link rel="stylesheet" type="text/css" href="../ap.ww.resources/font-awesome.min.css">
+
+  <link rel="stylesheet" type="text/css" href="../ap.ww.resources/bootstrap.min.css">
+  <script type="text/javascript" src="../ap.ww.resources/jquery-2.0.0.min.js"></script>
+  <script type="text/javascript" src="../ap.ww.resources/jquery.form.min.js"></script>
+  
+        <script src="../ap.ww.resources/d3.v3.min.js" charset="utf-8"></script>
+        <script src="../ap.ww.resources/dagre-d3.js"></script>
+        <script src="../ap.ww.resources/uri.min.js"></script>
+
+        <style>
+.navbar-inverse .brand, .navbar-inverse .nav>li>a{
+    
+    color :white !important;
+}
+.navbar{
+    
+    background-color: #007953;
+    box-shadow: inset 0 5px 20px -10px rgba(0,0,0,0.5);
+    margin-bottom: 20px !important;
+}
+.col-1 {
+    float: left;
+    width: 50%;
+    padding-left: 20px;
+}
+.col-2 {
+    float: right;
+    width: 44%;
+    padding: 10px;
+}
+            
+            
+            
+        </style>
+        
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse">
+            <div class="container-fluid">
+                <ul class="nav navbar-nav">
+                    <li><a href="/wa1">Home</a></li>
+                    <li class="active"><a href="training.html">Training</a></li>
+                    <li><a href="abtus.html">About Us</a></li>
+                </ul>
+            </div>
+        </nav>
+        
+        <div class="col-1" style="margin-left: 10px">
+            <h2>Ambiguity Parser</h2>
+            <p>The goal of Ambiguity Parser is to reduce ambiguity of any sentence by generating 3 phase trees of that Sentence. <p>
+            <p>It also gives out the probability score of those 3 trees, depicting which one is the best tree.<p>
+            <p> For Example, Here's a sentence:<p>
+            <div >  
+                
+                <h3 > The man saw the girl using a telescope.</h3>
+            </div>   
+            <p>This is an ambiguous sentence. We cannot interpret this sentence correctly, because there are 2 following Contexts:<p>
+            <p>Either the man used the telescope to see the girl OR</p>
+            <p>The girl was using a telescope and the man saw her.</p>
+            
+        </div>
+        <div class="col-2" style="margin-left: 10px">
+             <h2>Twitter Feed</h2>
+                <p>Just Input in the Username of any Twitter Account and all the recent Tweets will be fetched to check ambiguity.</p>
+                
+            
+        </div>
+        <div id="attach">
+              <svg id="svg-canvas" class="main-svg"></svg>
+            </div>
+        <img src="../ap.ww.resources/Tr1.PNG" alt="Training Roots" style="width:1500px;height:600px;">
+        
+    </body>
+</html>

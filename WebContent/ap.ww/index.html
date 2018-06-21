@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <title>Ambiguity Parse Visualization</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" type="text/css" href="ap.ww.resources/jquery-ui-1.9.2.custom.css">
+  <link rel="stylesheet" type="text/css" href="ap.ww.resources/font-awesome.min.css">
+
+  <link rel="stylesheet" type="text/css" href="ap.ww.resources/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="ap.ww/digraph.css">
+  <script type="text/javascript" src="ap.ww.resources/jquery-2.0.0.min.js"></script>
+  <script type="text/javascript" src="ap.ww.resources/jquery.form.min.js"></script>
+
+  <script src="ap.ww.resources/d3.v3.min.js" charset="utf-8"></script>
+  <script src="ap.ww.resources/dagre-d3.js"></script>
+  <script src="ap.ww.resources/uri.min.js"></script>
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+/* Create two equal columns that floats next to each other */
+.column-1 {
+    float: left;
+    width: 79%;
+    padding-left: 40px;
+}
+.column-2 {
+    float: right;
+    width: 19%;
+    padding: 10px;
+}
+
+.navbar{
+    
+        background-color: #007953;
+    box-shadow: inset 0 5px 20px -10px rgba(0,0,0,0.5);
+    margin-bottom: 20px !important;
+}
+.rootFloat{
+    
+    float:left;
+    width:350px;
+}
+.overflowTable{
+    overflow:auto;
+    max-height: 200px;
+        margin-bottom: 5px;
+    border-color: black;
+    border: 1px;
+}
+.fonthead{
+    
+    font-weight: bolder;
+    font-size: 20px;
+
+}
+.navbar-inverse .brand, .navbar-inverse .nav>li>a{
+    
+    color :white !important;
+}
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+    
+table {
+    width:100%;
+}
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+table#t01 tr:nth-child(even) {
+    background-color: #eee;
+}
+table#t01 tr:nth-child(odd) {
+   background-color:#fff;
+}
+table#t01 th {
+    background-color: black;
+    color: white;
+}
+#level{
+	font-size : 10px;
+	width : 20px;
+	height : 20px;
+}
+</style>
+</head>
+
+<body>
+    <nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <ul class="nav navbar-nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="ap.ww/training.html">Training</a></li>
+      <li><a href="ap.ww/abtus.html">About Us</a></li>
+    </ul>
+  </div>
+</nav>
+<div class="row">
+    <div class="column-1">
+        <div>
+          <label>
+          	<input id="level" value="2" type="hidden"><!-- TODO: Move this to the twitter section -->
+            <textarea placeholder="Type ONLY ONE sentence to parse here (press enter to submit)."
+                      id="sentence_input"
+                      class="text-input"
+                      rows="3" style="resize: none;"></textarea>
+          </label>
+        </div>
+        	<div style="margin-bottom: 10px;">
+		<button type="button" class="btn btn-primary" onclick="previousTweet()">Previous Tweet</button>
+                <button type="button" class="btn btn-primary" onclick="prevSent()">Previous Sentence</button>
+                <p style=" float: right;" id="tweetCount">Tweet:1/20 - Sentence: 1/3</p>
+                <button type="button" class="btn btn-primary" onclick="nextSent()">Next Sentence</button>
+                <button type="button" class="btn btn-primary" onclick="nextTweet()">Next Tweet</button>
+                
+                
+		</div>
+            <div id="attach">
+              <svg id="svg-canvas" class="main-svg"></svg>
+            </div>
+        <div>
+            <p class="rootFloat" onclick="alert1()">Root 1: <span id="root1"></span></p>
+            
+            <p class="rootFloat" onclick="alert2()"> Root 2: <span id="root2"></span> </p></div>
+    </div>
+    <div class="column-2" style="padding-top: 0px;" >
+        <div>
+            <p class="fonthead"> Twitter Feed </p>
+            <input type="text" id="twUname" placeholder="Enter Twitter Username"> <br>
+            <input  type="submit" class="btn btn-success" value="Fetch" onclick="twitterFetch()">
+            <input type="reset" class="btn btn-warning" onclick="reset()" style="color: black;">
+        </div>
+        <div class="overflowTable">
+            <table id="dynamicTable">    
+            </table>
+        </div>
+        <p class="fonthead">Tree Help</p>
+            <table id="t01">
+              <tr>
+                <th>Code</th> 
+                <th>Abbreviation</th>
+              </tr>
+              <tr>
+                <td>DT </td>
+                <td>Determiner</td>
+              </tr>
+              <tr>
+                <td>CD </td>
+                <td>Cardinal number</td>
+              </tr>
+              <tr>
+                <td>NP</td>
+                <td>Noun Phrase</td>
+              </tr>
+                  <tr>
+                <td>VBD</td>
+                <td>Verb, past tense</td>
+              </tr>
+                  <tr>
+                <td>PRP</td>
+                <td>Pronoun, personal</td>
+              </tr>
+                  <tr>
+                <td>VP</td>
+                <td>Verb Phrase</td>
+              </tr>
+                  <tr>
+                <td>VBZ</td>
+                <td>Verb, present tense, 3rd person singular</td>
+              </tr>
+                  <tr>
+                <td>VBP</td>
+                <td>Verb, present tense, not 3rd person singular</td>
+              </tr>
+                  <tr>
+                <td>VBG</td>
+                <td>Verb, present participle or gerund</td>
+              </tr>
+            </table>  
+        </div>
+    </div>
+
+    
+<script>
+    var rootprob="";
+     var realrootprob="";
+  var input = $("#sentence_input");
+  var level = $("#level");	
+  input.keypress(function (e) {
+    if (e.which === 13) {
+      renderText(input.val(), level.val());
+      e.preventDefault();
+    }
+  });
+
+  function renderText(text, level) {
+    $.ajax({
+      type: 'POST',
+      dataType: 'html',
+      url: "parser",
+      data: {
+        text: text,
+        level: level
+      },
+      error: function(err){
+        console.log(err);
+      }
+      ,
+      success: function (data) {
+
+         
+        $("#svg-canvas").empty();
+
+        var dataParsed = JSON.parse(data);
+         rootprob=dataParsed[0].Root;
+         realrootprob=dataParsed[0].RRoot;
+        var nodes = {};
+        var edges = [];
+
+        dataParsed.forEach(function (e) {
+          populate(e, nodes, edges);
+        });
+
+        var g = new dagreD3.graphlib.Graph()
+            .setGraph({})
+            .setDefaultEdgeLabel(function () {
+              return {};
+            });
+
+        for (var key in nodes) {
+          var node = nodes[key];
+          g.setNode(node.id, {
+            label: node.label,
+            class: node.nodeclass,
+            //  round edges
+            rx: 5,
+            ry: 5
+          });
+        }
+
+        edges.forEach(function (e) {
+          g.setEdge(e.source, e.target, {
+            lineTension: .8,
+            lineInterpolate: "bundle"
+          });
+        });
+
+        var render = new dagreD3.render();
+
+        var svg = d3.select("#svg-canvas"),
+            svgGroup = svg.append("g");
+
+        render(d3.select("#svg-canvas g"), g);
+
+        var xCenterOffset = (svg.attr("width") - g.graph().width) / 2;
+        svgGroup.attr("transform", "translate(" + xCenterOffset + ", 20)");
+        svg.attr("height", g.graph().height + 40);
+
+        //  enable zoom and scrolling
+        svgGroup.attr("transform", "translate(5, 5)");
+        
+        svg.call(d3.behavior.zoom().on("zoom", function redraw() {
+          svgGroup.attr("transform",
+              "translate(" + d3.event.translate + ")" + " scale(" + d3.event.scale + ")");
+        }));
+        roots();
+      }
+    });
+  }
+
+  function populate(data, nodes, edges) {
+    var nodeID = Object.keys(nodes).length;
+
+    var newNode = {
+      label: (data.data.type === "TK") ? data.data.word : data.data.type,
+      id: nodeID + ""
+    };
+
+    var classes = ["type-" + data.data.type];
+    if (data.data.ne) {
+      classes.push("ne-" + data.data.ne);
+    }
+
+    newNode.nodeclass = classes.join(" ");
+
+    nodes[nodeID] = newNode;
+
+    data.children.forEach(function (child) {
+      var newChild = populate(child, nodes, edges);
+
+      edges.push({
+        source: newNode.id,
+        target: newChild.id,
+        id: newNode.id + "-" + newChild.id
+      });
+
+    });
+
+    return newNode;
+  }
+
+
+  function buildGraphData(node, nodes, links) {
+
+    var index = nodes.length;
+    nodes.push({
+      name: node.data.content,
+      group: 1
+    });
+
+    node.children.forEach(function (e) {
+      links.push({
+        source: index,
+        target: nodes.length,
+        value: 2
+      });
+      buildGraphData(e, nodes, links);
+    });
+  }
+function roots(){
+        $('#root1').html("");
+     $('#root2').html("");
+      $('#root3').html("");
+     
+    
+    $('#root1').html(rootprob[0]);
+     $('#root2').html(rootprob[1]);
+      $('#root3').html(rootprob[2]);
+      
+        console.log(realrootprob);
+        console.log(rootprob);
+}
+
+function alert1(){
+    alert("Root 1: " +realrootprob[0]);
+    
+}
+function alert2(){
+  
+    alert("Root 2: " +realrootprob[1]);
+   
+    
+}
+function alert3(){
+
+    alert("Root 3: " +realrootprob[2]);
+
+}
+ var jsonTw=[];
+ function twitterFetch(){
+     
+     
+    var tweet= '@'+$('#twUname').val();
+    
+       $.ajax({
+      type: 'POST',
+      dataType: 'html',
+      url: "parser",
+      data: {
+        tweet: tweet
+        
+      },
+      error: function(err){
+        console.log(err);
+      },
+      
+      success: function (data) {
+
+      
+        var datap = JSON.parse(data);
+        twiterTable(datap);
+        
+        for(i=0;i<datap.Tweet.length;i++){
+        
+    }
+    }
+        });
+ 
+    }
+    var sen=[];
+    function twiterTable(json){
+        
+                    var inHTML = "";
+                        jsonTw=json.Tweet;
+            $.each(json.Tweet, function(index, value){
+                
+                var newItem = "<tr><td onclick=tweetPass(" + index + ")>"+ value + "</td></tr>";
+                sen=value;
+                inHTML += newItem;  
+            });
+
+            $("table#dynamicTable").html(inHTML);
+    }
+    var count=0;
+    var tweetlen=0;
+    var arr1=[];
+    var count_sen=0;
+    function tweetPass(id){
+        count_sen=0;
+        count=id;
+        //$('#sentence_input').html(sen.split(/\W+/));
+        var text=jsonTw[id].split("https")[0];
+        arr1=text.match(/([^\.!\?]+[\.!\?]+)|([^\.!\?]+$)/g);
+        tweetlen=arr1.length;
+       if(arr1.length>0){
+            
+        $('#sentence_input').html(arr1[0]);
+   }
+   else{
+           $('#sentence_input').html(text);
+       }
+  
+        
+       renderText(input.val());
+       var count_txt="Tweet:"+ count + "/20 - Sentence: "+count_sen+"/3";
+       $('#tweetCount').html(count_txt);
+    }
+    var c=0;
+    
+    function nextSent(){
+        console.log(tweetlen);
+            console.log(arr1);
+            if(count_sen >= 0 && count_sen < tweetlen){
+            count_sen=count_sen+1;
+             $('#sentence_input').html(arr1[count_sen]);
+             renderText(input.val());
+
+         }
+        }
+    function prevSent(){
+            console.log(tweetlen);
+            console.log(arr1);
+             if(count_sen > 0 && count_sen <= tweetlen){
+            count_sen=count_sen-1;
+             $('#sentence_input').html(arr1[count_sen]);
+             renderText(input.val());
+         }
+        }
+        
+        
+        
+    
+    function nextTweet(){
+        
+        count++;
+        tweetPass(count);   
+        
+    }
+    function previousTweet(){
+        
+        count--;
+        tweetPass(count); 
+    }
+ function reset(){
+     $('#twUname').val('');
+ }
+ 
+ $('#level').hover(
+	function(){
+		$(this).prop("title","Sets the level to which trees are compared for similarity. If trees are similar only one tree is returned.")
+	}		 
+ )
+</script>
+
+</body>
+
+</html>
+<!--
+Reference:- https://github.com/bpodgursky/nlpviz
+-->
