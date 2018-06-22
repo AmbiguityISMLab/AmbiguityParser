@@ -23,6 +23,26 @@
           <warName>${project.artifactId}</warName>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.1.1</version>
+        <executions>
+          <execution>
+            <id>copy-dependencies</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.basedir}/WebContent/WEB-INF/lib</outputDirectory>
+              <overWriteReleases>false</overWriteReleases>
+              <overWriteSnapshots>false</overWriteSnapshots>
+              <overWriteIfNewer>true</overWriteIfNewer>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -49,8 +69,20 @@
 	</dependency>
 	<dependency>
 	    <groupId>edu.stanford.nlp</groupId>
+	    <artifactId>stanford-corenlp</artifactId>
+	    <version>3.8.0</version>
+	    <classifier>models</classifier>
+	</dependency>
+	<dependency>
+	    <groupId>edu.stanford.nlp</groupId>
 	    <artifactId>stanford-parser</artifactId>
 	    <version>3.8.0</version>
+	</dependency>
+	<dependency>
+	    <groupId>edu.stanford.nlp</groupId>
+	    <artifactId>stanford-parser</artifactId>
+	    <version>3.8.0</version>
+	    <classifier>sources</classifier>
 	</dependency>
 	<dependency>
 	    <groupId>com.google.collections</groupId>
